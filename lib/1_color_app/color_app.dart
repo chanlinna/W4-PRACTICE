@@ -29,10 +29,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: _currentIndex == 0
           ? ColorTapsScreen()
-          : StatisticsScreen(
-              redTapCount: redTapCount,
-              blueTapCount: blueTapCount,
-            ),
+          : StatisticsScreen(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -56,10 +53,7 @@ class _HomeState extends State<Home> {
 }
 
 class ColorTapsScreen extends StatelessWidget {
-
-  const ColorTapsScreen({
-    super.key,
-  });
+  const ColorTapsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,9 +61,7 @@ class ColorTapsScreen extends StatelessWidget {
       body: Column(
         children: [
           ColorTap(type: CardType.red),
-          ColorTap(
-            type: CardType.blue,
-          ),
+          ColorTap(type: CardType.blue),
         ],
       ),
     );
@@ -121,26 +113,27 @@ class ColorTap extends StatelessWidget {
 }
 
 class StatisticsScreen extends StatelessWidget {
-  final int redTapCount;
-  final int blueTapCount;
-
-  const StatisticsScreen({
-    super.key,
-    required this.redTapCount,
-    required this.blueTapCount,
-  });
+  const StatisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Statistics')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Red Taps: $redTapCount', style: TextStyle(fontSize: 24)),
-            Text('Blue Taps: $blueTapCount', style: TextStyle(fontSize: 24)),
-          ],
+        child: ListenableBuilder(
+          listenable: colorService,
+          builder: (context, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Red Taps: ${colorService.redTapCount}', style: TextStyle(fontSize: 24)),
+                Text(
+                  'Blue Taps: ${colorService.blueTapCount}',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
