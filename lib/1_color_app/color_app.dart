@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:w4_practice/1_color_app/services/color_service.dart';
+
+final colorService = ColorService();
 
 void main() {
   runApp(
@@ -38,18 +41,17 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-          _currentIndex == 0
-              ? ColorTapsScreen(
-                redTapCount: redTapCount,
-                blueTapCount: blueTapCount,
-                onRedTap: _incrementRedTapCount,
-                onBlueTap: _incrementBlueTapCount,
-              )
-              : StatisticsScreen(
-                redTapCount: redTapCount,
-                blueTapCount: blueTapCount,
-              ),
+      body: _currentIndex == 0
+          ? ColorTapsScreen(
+              redTapCount: redTapCount,
+              blueTapCount: blueTapCount,
+              onRedTap: _incrementRedTapCount,
+              onBlueTap: _incrementBlueTapCount,
+            )
+          : StatisticsScreen(
+              redTapCount: redTapCount,
+              blueTapCount: blueTapCount,
+            ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
