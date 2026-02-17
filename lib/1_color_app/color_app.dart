@@ -23,31 +23,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  int redTapCount = 0;
-  int blueTapCount = 0;
-
-  void _incrementRedTapCount() {
-    setState(() {
-      redTapCount++;
-    });
-  }
-
-  void _incrementBlueTapCount() {
-    setState(() {
-      blueTapCount++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _currentIndex == 0
-          ? ColorTapsScreen(
-              redTapCount: redTapCount,
-              blueTapCount: blueTapCount,
-              onRedTap: _incrementRedTapCount,
-              onBlueTap: _incrementBlueTapCount,
-            )
+          ? ColorTapsScreen()
           : StatisticsScreen(
               redTapCount: redTapCount,
               blueTapCount: blueTapCount,
@@ -75,17 +56,9 @@ class _HomeState extends State<Home> {
 }
 
 class ColorTapsScreen extends StatelessWidget {
-  final int redTapCount;
-  final int blueTapCount;
-  final VoidCallback onRedTap;
-  final VoidCallback onBlueTap;
 
   const ColorTapsScreen({
     super.key,
-    required this.redTapCount,
-    required this.blueTapCount,
-    required this.onRedTap,
-    required this.onBlueTap,
   });
   @override
   Widget build(BuildContext context) {
@@ -93,11 +66,9 @@ class ColorTapsScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Color Taps')),
       body: Column(
         children: [
-          ColorTap(type: CardType.red, tapCount: redTapCount, onTap: onRedTap),
+          ColorTap(type: CardType.red),
           ColorTap(
             type: CardType.blue,
-            tapCount: blueTapCount,
-            onTap: onBlueTap,
           ),
         ],
       ),
@@ -107,37 +78,44 @@ class ColorTapsScreen extends StatelessWidget {
 
 class ColorTap extends StatelessWidget {
   final CardType type;
-  final int tapCount;
-  final VoidCallback onTap;
 
-  const ColorTap({
-    super.key,
-    required this.type,
-    required this.tapCount,
-    required this.onTap,
-  });
+  const ColorTap({super.key, required this.type});
 
   Color get backgroundColor => type == CardType.red ? Colors.red : Colors.blue;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        width: double.infinity,
-        height: 100,
-        child: Center(
-          child: Text(
-            'Taps: $tapCount',
-            style: TextStyle(fontSize: 24, color: Colors.white),
+    return ListenableBuilder(
+      listenable: colorService,
+      builder: (context, child) {
+        final tapCount = type == CardType.red
+            ? colorService.redTapCount
+            : colorService.blueTapCount;
+        return GestureDetector(
+          onTap: () {
+            if (type == CardType.red) {
+              colorService.incrementRedCount();
+            } else {
+              colorService.incrementBlueCount();
+            }
+          },
+          child: Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            width: double.infinity,
+            height: 100,
+            child: Center(
+              child: Text(
+                'Taps: $tapCount',
+                style: TextStyle(fontSize: 24, color: Colors.white),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
